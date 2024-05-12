@@ -13,17 +13,50 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 
     <style>
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            background-color: #333;
-            padding: 10px;
-        }
-        .box {
-            flex: 1;
-            text-align: center;
-            color: white;
-        }
+        nav {
+    background-color: rgb(75, 129, 255);
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+li {
+    float: left;
+}
+li a, .dropbtn {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+    background-color: rgb(0, 60, 255);
+    font-size: x-large;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgb(75, 129, 255);
+    min-width: 160px;
+    z-index: 1;
+}
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+.dropdown-content a:hover {
+    background-color: rgb(0, 60, 255);
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
 
         .estremo{
 
@@ -74,8 +107,6 @@
  
 
  
-
-        /* inizio centro*/
 
         #breadcrumb li{
 
@@ -163,7 +194,7 @@
 
         }
 
-        /* fine centro*/
+        
 
  
 
@@ -336,19 +367,7 @@
 
 <body>
 
-    <div class="navbar">
     
-  
-<div class="box">Categoria 1</div>
-    
-   
-<div class="box">Categoria 2</div>
-    
-   
-<div class="box">Categoria 3</div>
-
-</div>
-
     <div class="estremo">
 
         <ul>
@@ -362,6 +381,40 @@
   <li><a href="about.asp">About</a></li>
 
 </ul>
+
+        <nav>
+            <ul>
+                <li class="dropdown"><a href="#" class="dropbtn">Home</a>
+                    <div class="dropdown-content">
+                        <a href="#">Categoria 1</a>
+                        <a href="#">Categoria 2</a>
+                        <a href="#">Categoria 3</a>
+                    </div>
+                </li>
+                <li class="dropdown"><a href="#" class="dropbtn">Notizie</a>
+                    <div class="dropdown-content">
+                        <a href="#">Categoria 1</a>
+                        <a href="#">Categoria 2</a>
+                        <a href="#">Categoria 3</a>
+                    </div>
+                </li>
+                <li class="dropdown"><a href="#" class="dropbtn">Contatti</a>
+                    <div class="dropdown-content">
+                        <a href="#">Categoria 1</a>
+                        <a href="#">Categoria 2</a>
+                        <a href="#">Categoria 3</a>
+                    </div>
+                </li>
+                <li class="dropdown"><a href="#" class="dropbtn">About</a>
+                    <div class="dropdown-content">
+                        <a href="#">Categoria 1</a>
+                        <a href="#">Categoria 2</a>
+                        <a href="#">Categoria 3</a>
+                    </div>
+                </li>
+                <li><a href="../alessiomazza07.github.io/index.html"><i class="fa-solid fa-circle-chevron-left"></i>Torna all'index</a></li>
+            </ul>
+        </nav>
 
         <div id="Logo">Logo</div>
 
