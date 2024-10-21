@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatrice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-around;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        .calculator {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            width: 250px;
+            background-color: #fff;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        h3 {
+            text-align: center;
+        }
+        h4 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h3>Calcolatrice</h3>
+        <input type="text" id="input" placeholder="Esempio: 3 + 5">
+        <button onclick="calculate()">Calcola</button>
+        <h4>Risultato: <span id="result"></span></h4>
+    </div>
+
+    <script>
+        function calculate() {
+            const input = document.getElementById('input').value;
+            const regex = /^(-?\d*\.?\d+)\s*([\+\-\*\/])\s*(-?\d*\.?\d+)$/;
+            const match = input.match(regex);
+            let result;
+
+            if (match) {
+                const num1 = parseFloat(match[1]);
+                const operation = match[2];
+                const num2 = parseFloat(match[3]);
+
+                switch (operation) {
+                    case '+':
+                        result = num1 + num2;
+                        break;
+                    case '-':
+                        result = num1 - num2;
+                        break;
+                    case '*':
+                        result = num1 * num2;
+                        break;
+                    case '/':
+                        result = num2 !== 0 ? num1 / num2 : 'Divisione per zero';
+                        break;
+                }
+            } else {
+                result = 'Input non valido';
+            }
+
+            document.getElementById('result').innerText = result;
+        }
+    </script>
+</body>
+</html>
