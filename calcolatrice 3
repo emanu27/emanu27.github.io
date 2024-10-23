@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatrice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-around;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        .calculator {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            width: 250px;
+            background-color: #fff;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 48%;
+            margin: 1%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        h3 {
+            text-align: center;
+        }
+        h4 {
+            text-align: center;
+            color: #333;
+        }
+        .operations {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h3>Calcolatrice</h3>
+        <input type="text" id="input" placeholder="Inserisci i numeri">
+        <div class="operations">
+            <div class="row">
+                <button onclick="setOperation('+')">+</button>
+                <button onclick="setOperation('-')">-</button>
+            </div>
+            <div class="row">
+                <button onclick="setOperation('*')">*</button>
+                <button onclick="setOperation('/')">/</button>
+            </div>
+            <button onclick="calculateResult()">=</button>
+            <button onclick="clearInput()">C</button>
+        </div>
+        <h4>Risultato: <span id="result1"></span></h4>
+    </div>
+
+    <script>
+        let operation = null;
+        let currentInput = '';
+
+        function setOperation(op) {
+            if (currentInput) {
+                if (operation) {
+                    calculateResult();  
+                }
+                operation = op;
+                document.getElementById('input').value = ''; 
+            }
+        }
+
+        function calculateResult() {
+            const values = currentInput.split(',');
+            const num1 = parseFloat(values[values.length - 1]); 
+            const num2 = parseFloat(values[values.length - 2]); 
+            
+            let result;
+
+            if (!operation || isNaN(num1) || isNaN(num2)) {
+                result = 'Input non valido';
+            } else {
+                switch (operation) {
+                    case '+':
+                        result = values.reduce((acc, curr) => acc + parseFloat(curr), 0);
+                        break;
+                    case '-':
+                        result = num2 !== undefined ? num2 - num1 : 'Input non valido';
+                        break;
+                    case '*':
+                        result = values.reduce((acc, curr) => acc * parseFloat(curr), 1);
+                        break;
+                    case '/':
+                        result = num2 !== 0 ? num2 / num1 : 'Divisione per zero';
+                        break;
+                }
+            }
+
+            document.getElementById('result1').innerText = result;
+            currentInput = ''; 
+            operation = null;  
+        }
+
+        function clearInput() {
+            document.getElementById('input').value = '';
+            currentInput = ''; 
+            operation = null;  
+            document.getElementById('result1').innerText = ''; 
+        }
+
+        document.getElementById('input').addEventListener('input', function() {
+            currentInput = this.value; 
+        });
+    </script>
+</body>
+</html>
+
