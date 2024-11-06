@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modulo Dati</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+      
+        .form-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+   
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+
+        input[type="text"], input[type="email"] {
+            width: 80%; 
+            padding: 8px; 
+            margin: 5px 0;
+            font-size: 14px; 
+            box-sizing: border-box; 
+        }
+
+        button {
+            padding: 8px 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form id="formDati" onsubmit="inserisciDati(event)">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required><br>
+
+            <label for="cognome">Cognome:</label>
+            <input type="text" id="cognome" name="cognome" required><br>
+
+            <label for="citta">Città:</label>
+            <input type="text" id="citta" name="citta" required><br>
+
+            <label for="via">Via:</label>
+            <input type="text" id="via" name="via" required><br>
+
+            <label for="cf">Codice Fiscale:</label>
+            <input type="text" id="cf" name="cf" required><br>
+
+            <label for="email">Indirizzo Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <button type="submit">Invia</button>
+        </form>
+    </div>
+
+    <h2>Dati</h2>
+    <table id="tabellaDati">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Città</th>
+                <th>Via</th>
+                <th>Codice Fiscale</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+    </table>
+
+    <script>
+        function inserisciDati(event) {
+            event.preventDefault(); 
+
+         
+            const nome = document.getElementById('nome').value;
+            const cognome = document.getElementById('cognome').value;
+            const citta = document.getElementById('citta').value;
+            const via = document.getElementById('via').value;
+            const cf = document.getElementById('cf').value;
+            const email = document.getElementById('email').value;
+
+        
+            const tr = document.createElement('tr');
+
+         
+            tr.innerHTML = `
+                <td>${nome}</td>
+                <td>${cognome}</td>
+                <td>${citta}</td>
+                <td>${via}</td>
+                <td>${cf}</td>
+                <td>${email}</td>
+            `;
+
+         
+            document.querySelector('#tabellaDati tbody').appendChild(tr);
+
+            
+            document.getElementById('formDati').reset();
+        }
+    </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modulo Dati</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+      
+        .form-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+   
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+
+        input[type="text"], input[type="email"] {
+            width: 80%; 
+            padding: 8px; 
+            margin: 5px 0;
+            font-size: 14px; 
+            box-sizing: border-box; 
+        }
+
+        button {
+            padding: 8px 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form id="formDati" onsubmit="inserisciDati(event)">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required><br>
+
+            <label for="cognome">Cognome:</label>
+            <input type="text" id="cognome" name="cognome" required><br>
+
+            <label for="citta">Città:</label>
+            <input type="text" id="citta" name="citta" required><br>
+
+            <label for="via">Via:</label>
+            <input type="text" id="via" name="via" required><br>
+
+            <label for="cf">Codice Fiscale:</label>
+            <input type="text" id="cf" name="cf" required><br>
+
+            <label for="email">Indirizzo Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <button type="submit">Invia</button>
+        </form>
+    </div>
+
+    <h2>Dati</h2>
+    <table id="tabellaDati">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Città</th>
+                <th>Via</th>
+                <th>Codice Fiscale</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+    </table>
+
+    <script>
+        function inserisciDati(event) {
+            event.preventDefault(); 
+
+         
+            const nome = document.getElementById('nome').value;
+            const cognome = document.getElementById('cognome').value;
+            const citta = document.getElementById('citta').value;
+            const via = document.getElementById('via').value;
+            const cf = document.getElementById('cf').value;
+            const email = document.getElementById('email').value;
+
+        
+            const tr = document.createElement('tr');
+
+         
+            tr.innerHTML = `
+                <td>${nome}</td>
+                <td>${cognome}</td>
+                <td>${citta}</td>
+                <td>${via}</td>
+                <td>${cf}</td>
+                <td>${email}</td>
+            `;
+
+         
+            document.querySelector('#tabellaDati tbody').appendChild(tr);
+
+            
+            document.getElementById('formDati').reset();
+        }
+    </script>
+
+</body>
+</html>
