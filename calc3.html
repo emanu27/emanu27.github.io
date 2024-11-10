@@ -11,93 +11,148 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
             background-color: #000;
         }
-        #calculator {
-            border: 1px solid #ccc;
+        .calculator {
+            border: 1px solid #333;
             padding: 20px;
-            border-radius: 15px; /* Aggiunta per arrotondare i bordi */
-            background-color: #222;
+            border-radius: 10px;
+            width: 320px;
+            background-color: #000;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         }
-        input[type="text"] {
-            width: 100%;
-            height: 40px;
-            text-align: right;
-            font-size: 18px;
-            margin-bottom: 10px;
-            background-color: #333; 
-            color: #fff; 
-            border: none;
-            border-radius: 5px;
-        }
-        .button-row {
-            display: flex;
-            justify-content: space-between;
+        #display {
+    width: 100%;
+    height: 50px;
+    margin-bottom: 10px;
+    padding: 10px 2px; 
+    font-size: 1.5em;
+    text-align: right;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #333;
+    color: black;
+}
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
         button {
-            width: 22%;
-            height: 40px;
-            font-size: 18px;
-            margin: 1%;
-            background-color: orange; 
-            color: #000; 
+            font-size: 1.2em;
+            padding: 20px;
             border: none;
-            border-radius: 10px; /* Aggiunta per arrotondare i bordi dei pulsanti */
+            border-radius: 5px;
             cursor: pointer;
+            background-color: #ff9500;
+            color: black;
         }
         button:hover {
-            background-color: #ff7f00; 
+            background-color: #cc7a00;
+        }
+        .operator {
+            background-color: #ff9500;
+        }
+        .operator:hover {
+            background-color: #cc7a00;
+        }
+        .equals {
+            background-color: #cc7a00;
+            grid-column: span 4; 
+            color: #333;
+        }
+        .clear {
+            background-color: #cc7a00;
+            grid-column: span 2;
+            color: #333;
+        }
+        .clear:hover {
+            background-color: #cc7a00;
         }
     </style>
 </head>
 <body>
 
-<div id="calculator">
-    <input type="text" id="display" disabled>
-    <div class="button-row">
-        <button onclick="appendToDisplay('1')">1</button>
-        <button onclick="appendToDisplay('2')">2</button>
-        <button onclick="appendToDisplay('3')">3</button>
-        <button onclick="appendToDisplay('+')">+</button>
+    <div class="calculator">
+        <input type="text" id="display" disabled placeholder="0">
+        <div class="buttons">
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="setOperation('/')">÷</button>
+            
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="setOperation('*')">×</button>
+            
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="setOperation('-')">-</button>
+            
+            <button onclick="appendNumber('0')">0</button>
+            <button class="clear" onclick="clearInput()">C</button>
+            <button class="operator" onclick="setOperation('+')">+</button>
+            <button class="equals" onclick="calculateResult()">=</button>
+        </div>
     </div>
-    <div class="button-row">
-        <button onclick="appendToDisplay('4')">4</button>
-        <button onclick="appendToDisplay('5')">5</button>
-        <button onclick="appendToDisplay('6')">6</button>
-        <button onclick="appendToDisplay('-')">-</button>
-    </div>
-    <div class="button-row">
-        <button onclick="appendToDisplay('7')">7</button>
-        <button onclick="appendToDisplay('8')">8</button>
-        <button onclick="appendToDisplay('9')">9</button>
-        <button onclick="appendToDisplay('*')">*</button>
-    </div>
-    <div class="button-row">
-        <button onclick="appendToDisplay('0')">0</button>
-        <button onclick="calculate()">=</button>
-        <button onclick="clearDisplay()">C</button>
-        <button onclick="appendToDisplay('/')">/</button>
-    </div>
-</div>
 
-<script>
-    function appendToDisplay(value) {
-        document.getElementById("display").value += value;
-    }
+    <script>
+        let firstNum = null;
+        let operation = null;
+        let resetDisplay = false;
 
-    function clearDisplay() {
-        document.getElementById("display").value = '';
-    }
-
-    function calculate() {
-        const display = document.getElementById("display");
-        try {
-            display.value = eval(display.value);
-        } catch (error) {
-            display.value = 'Errore';
+        function appendNumber(number) {
+            const display = document.getElementById('display');
+            if (resetDisplay) {
+                display.value = number;
+                resetDisplay = false;
+            } else {
+                display.value = display.value === '0' ? number : display.value + number;
+            }
         }
-    }
-</script>
 
+        function setOperation(op) {
+            firstNum = parseFloat(document.getElementById('display').value);
+            operation = op;
+            resetDisplay = true;
+        }
+
+        function calculateResult() {
+            if (operation && firstNum !== null) {
+                const secondNum = parseFloat(document.getElementById('display').value);
+                let result;
+                
+                switch (operation) {
+                    case '+':
+                        result = firstNum + secondNum;
+                        break;
+                    case '-':
+                        result = firstNum - secondNum;
+                        break;
+                    case '*':
+                        result = firstNum * secondNum;
+                        break;
+                    case '/':
+                        result = secondNum !== 0 ? firstNum / secondNum : 'Errore';
+                        break;
+                }
+
+                document.getElementById('display').value = result;
+                firstNum = null;
+                operation = null;
+                resetDisplay = true;
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('display').value = '0';
+            firstNum = null;
+            operation = null;
+            resetDisplay = false;
+        }
+    </script>
 </body>
 </html>
