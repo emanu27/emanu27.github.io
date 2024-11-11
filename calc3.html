@@ -23,17 +23,17 @@
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         }
         #display {
-    width: 100%;
-    height: 50px;
-    margin-bottom: 10px;
-    padding: 10px 2px; 
-    font-size: 1.5em;
-    text-align: right;
-    border: 1px solid #333;
-    border-radius: 5px;
-    background-color: #333;
-    color: black;
-}
+            width: 100%;
+            height: 50px;
+            margin-bottom: 10px;
+            padding: 10px 2px; 
+            font-size: 1.5em;
+            text-align: right;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #333;
+            color: black;
+        }
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -77,24 +77,25 @@
     <div class="calculator">
         <input type="text" id="display" disabled placeholder="0">
         <div class="buttons">
+            <button class="operator" onclick="calculateSquare()">x²</button>
+            <button class="operator" onclick="calculateSquareRoot()">√</button>
+            <button class="operator" onclick="setOperation('%')">%</button>
+            <button class="operator" onclick="setOperation('/')">÷</button>
             <button onclick="appendNumber('7')">7</button>
             <button onclick="appendNumber('8')">8</button>
             <button onclick="appendNumber('9')">9</button>
-            <button class="operator" onclick="setOperation('/')">÷</button>
-            
+            <button class="operator" onclick="setOperation('*')">×</button>
             <button onclick="appendNumber('4')">4</button>
             <button onclick="appendNumber('5')">5</button>
             <button onclick="appendNumber('6')">6</button>
-            <button class="operator" onclick="setOperation('*')">×</button>
-            
+            <button class="operator" onclick="setOperation('-')">-</button>
             <button onclick="appendNumber('1')">1</button>
             <button onclick="appendNumber('2')">2</button>
             <button onclick="appendNumber('3')">3</button>
-            <button class="operator" onclick="setOperation('-')">-</button>
-            
-            <button onclick="appendNumber('0')">0</button>
-            <button class="clear" onclick="clearInput()">C</button>
             <button class="operator" onclick="setOperation('+')">+</button>
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendDecimal()">.</button>
+            <button class="clear" onclick="clearInput()">C</button>
             <button class="equals" onclick="calculateResult()">=</button>
         </div>
     </div>
@@ -111,6 +112,13 @@
                 resetDisplay = false;
             } else {
                 display.value = display.value === '0' ? number : display.value + number;
+            }
+        }
+
+        function appendDecimal() {
+            const display = document.getElementById('display');
+            if (!display.value.includes('.')) {
+                display.value += '.';
             }
         }
 
@@ -138,6 +146,9 @@
                     case '/':
                         result = secondNum !== 0 ? firstNum / secondNum : 'Errore';
                         break;
+                    case '%':
+                        result = firstNum % secondNum;
+                        break;
                 }
 
                 document.getElementById('display').value = result;
@@ -145,6 +156,20 @@
                 operation = null;
                 resetDisplay = true;
             }
+        }
+
+        function calculateSquare() {
+            const display = document.getElementById('display');
+            const currentNum = parseFloat(display.value);
+            display.value = currentNum * currentNum;
+            resetDisplay = true;
+        }
+
+        function calculateSquareRoot() {
+            const display = document.getElementById('display');
+            const currentNum = parseFloat(display.value);
+            display.value = currentNum >= 0 ? Math.sqrt(currentNum) : 'Errore';
+            resetDisplay = true;
         }
 
         function clearInput() {
