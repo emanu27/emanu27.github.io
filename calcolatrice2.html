@@ -8,86 +8,148 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: space-around;
-            margin: 50px;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
             background-color: #f4f4f4;
         }
         .calculator {
             border: 1px solid #ccc;
             padding: 20px;
             border-radius: 10px;
-            width: 250px;
+            width: 320px;
             background-color: #fff;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         }
-        input[type="text"] {
+        #display {
             width: 100%;
+            height: 50px;
             margin-bottom: 10px;
-            padding: 5px;
+            padding: 1px;
+            font-size: 1.5em;
+            text-align: right;
             border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: #e6e6e6;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
         button {
-            width: 100%;
-            padding: 10px;
+            font-size: 1.2em;
+            padding: 20px;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
             background-color: #007bff;
             color: white;
-            cursor: pointer;
         }
         button:hover {
             background-color: #0056b3;
         }
-        h3 {
-            text-align: center;
+        .operator {
+            background-color: #ff9500;
         }
-        h4 {
-            text-align: center;
-            color: #333;
+        .operator:hover {
+            background-color: #cc7a00;
+        }
+        .equals {
+            background-color: #4caf50;
+            grid-column: span 4; 
+        }
+        .clear {
+            background-color: #f44336;
+            grid-column: span 2;
+        }
+        .clear:hover {
+            background-color: #cc331f;
         }
     </style>
 </head>
 <body>
 
     <div class="calculator">
-        <h3>Calcolatrice</h3>
-        <input type="text" id="input">
-        <button onclick="calculate()">Calcola</button>
-        <h4>Risultato: <span id="result"></span></h4>
+        <input type="text" id="display" disabled placeholder="0">
+        <div class="buttons">
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="setOperation('/')">÷</button>
+            
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="setOperation('*')">×</button>
+            
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="setOperation('-')">-</button>
+            
+            <button onclick="appendNumber('0')">0</button>
+            <button class="clear" onclick="clearInput()">C</button>
+            <button class="operator" onclick="setOperation('+')">+</button>
+            
+            <button class="equals" onclick="calculateResult()">=</button>
+        </div>
     </div>
 
     <script>
-        function calculate() {
-            const input = document.getElementById('input').value;
-            const regex = /^(-?\d*\.?\d+)\s*([\+\-\*\/])\s*(-?\d*\.?\d+)$/;
-            const match = input.match(regex);
-            let result;
+        let firstNum = null;
+        let operation = null;
+        let resetDisplay = false;
 
-            if (match) {
-                const num1 = parseFloat(match[1]);
-                const operation = match[2];
-                const num2 = parseFloat(match[3]);
+        function appendNumber(number) {
+            const display = document.getElementById('display');
+            if (resetDisplay) {
+                display.value = number;
+                resetDisplay = false;
+            } else {
+                display.value = display.value === '0' ? number : display.value + number;
+            }
+        }
 
+        function setOperation(op) {
+            firstNum = parseFloat(document.getElementById('display').value);
+            operation = op;
+            resetDisplay = true;
+        }
+
+        function calculateResult() {
+            if (operation && firstNum !== null) {
+                const secondNum = parseFloat(document.getElementById('display').value);
+                let result;
+                
                 switch (operation) {
                     case '+':
-                        result = num1 + num2;
+                        result = firstNum + secondNum;
                         break;
                     case '-':
-                        result = num1 - num2;
+                        result = firstNum - secondNum;
                         break;
                     case '*':
-                        result = num1 * num2;
+                        result = firstNum * secondNum;
                         break;
                     case '/':
-                        result = num2 !== 0 ? num1 / num2 : 'Divisione per zero';
+                        result = secondNum !== 0 ? firstNum / secondNum : 'Errore';
                         break;
                 }
-            } else {
-                result = 'Input non valido';
-            }
 
-            document.getElementById('result').innerText = result;
+                document.getElementById('display').value = result;
+                firstNum = null;
+                operation = null;
+                resetDisplay = true;
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('display').value = '0';
+            firstNum = null;
+            operation = null;
+            resetDisplay = false;
         }
     </script>
 </body>
