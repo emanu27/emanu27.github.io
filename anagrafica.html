@@ -56,46 +56,71 @@
     </table>
 
     <script>
-        function inserisciDati(event) {
-            event.preventDefault();
+    
+        let dati = [];
+    
+        function validaEmail(email) {
+            const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            return regexEmail.test(email);
+        }
+    
+        function validaCodiceFiscale(codiceFiscale) {
+            const regexCodiceFiscale = /^[A-Z0-9]{16}$/;
+            return regexCodiceFiscale.test(codiceFiscale);
+        }
+    
+        function aggiungiDati() {
             const nome = document.getElementById('nome').value;
             const cognome = document.getElementById('cognome').value;
             const citta = document.getElementById('citta').value;
-            const via = document.getElementById('via').value;
-            const cf = document.getElementById('cf').value;
+            const indirizzo = document.getElementById('indirizzo').value;
+            const codiceFiscale = document.getElementById('codiceFiscale').value;
             const email = document.getElementById('email').value;
+    
+            if (!nome || !cognome || !citta || !indirizzo || !codiceFiscale || !email) {
+                alert("Tutti i campi sono obbligatori!");
+                return;
+            }
+    
+            if (!validaEmail(email)) {
+                alert("L'email inserita non è valida.");
+                return;
+            }
+    
+            if (!validaCodiceFiscale(codiceFiscale)) {
+                alert("Il codice fiscale non è valido.");
+                return;
+            }
+    
+            
+            dati.push({ nome, cognome, citta, indirizzo, codiceFiscale, email });
 
-            const tr = document.createElement('tr');
+            aggiornaTabella();
+            document.getElementById('nome').value = '';
+            document.getElementById('cognome').value = '';
+            document.getElementById('citta').value = '';
+            document.getElementById('indirizzo').value = '';
+            document.getElementById('codiceFiscale').value = '';
+            document.getElementById('email').value = '';
+        }
+    
+        function aggiornaTabella() {
+            const tabella = document.getElementById('datiTabella').getElementsByTagName('tbody')[0];
 
-            const tdNome = document.createElement('td');
-            tdNome.textContent = nome;
-            tr.appendChild(tdNome);
-
-            const tdCognome = document.createElement('td');
-            tdCognome.textContent = cognome;
-            tr.appendChild(tdCognome);
-
-            const tdCitta = document.createElement('td');
-            tdCitta.textContent = citta;
-            tr.appendChild(tdCitta);
-
-            const tdVia = document.createElement('td');
-            tdVia.textContent = via;
-            tr.appendChild(tdVia);
-
-            const tdCF = document.createElement('td');
-            tdCF.textContent = cf;
-            tr.appendChild(tdCF);
-
-            const tdEmail = document.createElement('td');
-            tdEmail.textContent = email;
-            tr.appendChild(tdEmail);
-
-            document.querySelector('#tabellaDati tbody').appendChild(tr);
-
-            document.getElementById('formDati').reset();
+            tabella.innerHTML = '';
+            
+            dati.forEach(item => {
+                const nuovaRiga = tabella.insertRow();
+                nuovaRiga.insertCell(0).textContent = item.nome;
+                nuovaRiga.insertCell(1).textContent = item.cognome;
+                nuovaRiga.insertCell(2).textContent = item.citta;
+                nuovaRiga.insertCell(3).textContent = item.indirizzo;
+                nuovaRiga.insertCell(4).textContent = item.codiceFiscale;
+                nuovaRiga.insertCell(5).textContent = item.email;
+            });
         }
     </script>
-</body>
-</html>
-
+    
+    </body>
+    </html>
+    
