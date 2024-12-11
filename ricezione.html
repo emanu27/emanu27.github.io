@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricezione Dati</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dati Ricevuti</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Città</th>
+                <th>Via</th>
+                <th>Codice Fiscale</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="tabellaDati"></tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dati = localStorage.getItem('dati');
+            if (dati) {
+                const datiArray = dati.split(',');
+                const tabella = document.getElementById('tabellaDati');
+                const riga = tabella.insertRow();
+                datiArray.forEach(dato => {
+                    const cella = riga.insertCell();
+                    cella.textContent = dato;
+                });
+            } else {
+                alert("Nessun dato trovato in localStorage.");
+            }
+        });
+    </script>
+</body>
+</html>
