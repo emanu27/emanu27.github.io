@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabella</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Carica un file CSV</h1>
+    <input type="file" id="fileInput" accept=".csv" onchange="caricaCSV(this)">
+    <div id="output">
+        <table id="csvTable"></table>
+    </div>
+
+    <script>
+        function caricaCSV(input) {
+            const file = input.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const csvText = event.target.result;
+                    mostraTabella(csvText);
+                };
+
+                reader.readAsText(file);
+            } else {
+                alert("Nessun file selezionato.");
+            }
+        }
+
+        function mostraTabella(csvText) {
+            const righe = csvText.split("\n");
+            const table = document.getElementById("csvTable");
+            table.innerHTML = ""; 
+
+            righe.forEach((riga, indice) => {
+                const cells = riga.split(",");
+                const row = table.insertRow();
+
+                cells.forEach(cell => {
+                    const cellElement = indice === 0 ? document.createElement("th") : document.createElement("td");
+                    cellElement.textContent = cell.trim();
+                    row.appendChild(cellElement);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
