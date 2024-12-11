@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modulo Dati</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px 0;
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <form id="formDati" onsubmit="salvaEDirigi(event)">
+        <input type="text" id="nome" placeholder="Nome" required><br>
+        <input type="text" id="cognome" placeholder="Cognome" required><br>
+        <input type="text" id="citta" placeholder="Città" required><br>
+        <input type="text" id="via" placeholder="Via" required><br>
+        <input type="text" id="cf" placeholder="Codice Fiscale" required><br>
+        <input type="email" id="email" placeholder="Email" required><br>
+        <button type="submit">Invia</button>
+    </form>
+
+    <script>
+        function salvaEDirigi(event) {
+            event.preventDefault();
+            const dati = [
+                document.getElementById('nome').value,
+                document.getElementById('cognome').value,
+                document.getElementById('citta').value,
+                document.getElementById('via').value,
+                document.getElementById('cf').value,
+                document.getElementById('email').value
+            ];
+            localStorage.setItem('dati', dati.join(','));
+            location.href = 'ricezione.html';
+        }
+    </script>
+</body>
+</html>
