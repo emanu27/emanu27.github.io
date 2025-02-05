@@ -13,48 +13,48 @@
         th, td {
             border: 1px solid black;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #ddd;
         }
         canvas {
             margin-top: 20px;
-            max-width: 100%;
+            width: 100%;
             border: 1px solid black;
         }
     </style>
 </head>
 <body>
     <h1>Carica un file CSV</h1>
-    <input type="file" id="fileInput" accept=".csv" onchange="caricaCSV(this)">
+    <input type="file" id="fileInput" accept=".csv">
     <table id="csvTable"></table>
     <canvas id="grafico" width="600" height="400"></canvas>
 
     <script>
-        function caricaCSV(input) {
-            const file = input.files[0];
+        document.getElementById("fileInput").addEventListener("change", function(event) {
+            const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    const csvText = event.target.result;
+                reader.onload = function(e) {
+                    const csvText = e.target.result;
                     mostraTabella(csvText);
                     generaGrafico(csvText);
                 };
                 reader.readAsText(file);
             } else {
-                alert("Nessun file selezionato.");
+                alert("Seleziona un file CSV.");
             }
-        }
+        });
 
         function mostraTabella(csvText) {
-            const righe = csvText.split("\n");
+            const righe = csvText.trim().split("\n");
             const table = document.getElementById("csvTable");
             table.innerHTML = "";
-            righe.forEach((riga, indice) => {
+            righe.forEach((riga, i) => {
                 const row = table.insertRow();
                 riga.split(",").forEach(cell => {
-                    const cellElement = indice === 0 ? document.createElement("th") : document.createElement("td");
+                    const cellElement = i === 0 ? document.createElement("th") : document.createElement("td");
                     cellElement.textContent = cell.trim();
                     row.appendChild(cellElement);
                 });
@@ -62,28 +62,25 @@
         }
 
         function generaGrafico(csvText) {
-            const righe = csvText.split("\n");
-            const intestazioni = righe[0].split(",").map(h => h.trim());
-            const dati = righe.slice(1).map(riga => riga.split(",").map(cella => cella.trim()));
+            const righe = csvText.trim().split("\n");
+            const dati = righe.slice(1).map(riga => riga.split(","));
             const etichette = dati.map(riga => riga[0]);
             const valori = dati.map(riga => parseFloat(riga[1]) || 0);
+            
             const canvas = document.getElementById("grafico");
             const ctx = canvas.getContext("2d");
-            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#f2f2f2";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             const maxVal = Math.max(...valori);
-            const barWidth = canvas.width / valori.length - 10;
+            const barWidth = (canvas.width - 40) / valori.length;
             const scale = (canvas.height - 40) / maxVal;
             
             ctx.fillStyle = "blue";
             valori.forEach((val, i) => {
                 const barHeight = val * scale;
-                ctx.fillRect(i * (barWidth + 10) + 20, canvas.height - barHeight - 20, barWidth, barHeight);
+                ctx.fillRect(40 + i * barWidth, canvas.height - barHeight - 20, barWidth - 10, barHeight);
                 ctx.fillStyle = "black";
-                ctx.fillText(etichette[i], i * (barWidth + 10) + 20, canvas.height - 5);
+                ctx.fillText(etichette[i], 40 + i * barWidth, canvas.height - 5);
                 ctx.fillStyle = "blue";
             });
         }
