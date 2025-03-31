@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabella con Grafico a Linea</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        canvas {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Carica un file CSV</h1>
+    <input type="file" id="fileInput" accept=".csv" onchange="caricaCSV(this)">
+    <table id="csvTable"></table>
+    <canvas id="grafico"></canvas>
+
+    <script>
+        function caricaCSV(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const csvText = event.target.result;
+                    mostraTabella(csvText); 
+                    generaGrafico(csvText); 
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Nessun file selezionato.");
+            }
+        }
+
+        function mostraTabella(csvText) {
+            const righe = csvText.split("\n"); 
+            const table = document.getElementById("csvTable");
+            table.innerHTML = ""; 
+
+            righe.forEach((riga, indice) => {
+                const row = table.insertRow();
+                riga.split(",").forEach(cell => {
+                    const cellElement = indice === 0 ? document.createElement("th") : document.createElement("td");
+                    cellElement.textContent = cell.trim(); 
+                    row.appendChild(cellElement);
+                });
+            });
+        }
+
+        function generaGrafico(csvText) {
+            const righe = csvText.split("\n");
+            const intestazioni = righe[0].split(",").map(h => h.trim()); 
+            const dati = righe.slice(1).map(riga => riga.split(",").map(cella => cella.trim()));
+            const etichette = dati.map(riga => riga[0]); 
+            const valori = dati.map(riga => parseFloat(riga[1]) || 0);
+            const ctx = document.getElementById("grafico").getContext("2d");
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: etichette, 
+                    datasets: [{
+                        label: intestazioni[1], 
+                        data: valori,
+                        borderColor: "blue",
+                        borderWidth: 2,
+                        fill: false, 
+                        pointBackgroundColor: "red", 
+                        pointRadius: 5 
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true } 
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
