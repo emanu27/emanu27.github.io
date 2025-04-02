@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabella con Grafico a Linea</title>
+    <title>Tabella e Grafico con Canvas</title>
     <style>
         table {
             border-collapse: collapse;
@@ -11,85 +11,117 @@
             margin-top: 20px;
         }
         th, td {
-            border: 1px solid black;
+            border: 1px solid #000;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
         th {
             background-color: #f2f2f2;
         }
         canvas {
             margin-top: 20px;
-            max-width: 100%;
+            width: 100%;
+            height: 300px;
+            border: 1px solid #000;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>Carica un file CSV</h1>
-    <input type="file" id="fileInput" accept=".csv" onchange="caricaCSV(this)">
+    <input type="file" id="fileInput" accept=".csv">
     <table id="csvTable"></table>
     <canvas id="grafico"></canvas>
 
     <script>
-        function caricaCSV(input) {
-            const file = input.files[0];
+        document.getElementById('fileInput').addEventListener('change', function() {
+            const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     const csvText = event.target.result;
-                    mostraTabella(csvText); 
-                    generaGrafico(csvText); 
+                    mostraTabella(csvText);
+                    disegnaGrafico(csvText);
                 };
                 reader.readAsText(file);
             } else {
                 alert("Nessun file selezionato.");
             }
-        }
+        });
 
         function mostraTabella(csvText) {
-            const righe = csvText.split("\n"); 
+            const righe = csvText.split("\n");
             const table = document.getElementById("csvTable");
-            table.innerHTML = ""; 
+            table.innerHTML = "";
 
             righe.forEach((riga, indice) => {
                 const row = table.insertRow();
-                riga.split(",").forEach(cell => {
-                    const cellElement = indice === 0 ? document.createElement("th") : document.createElement("td");
-                    cellElement.textContent = cell.trim(); 
-                    row.appendChild(cellElement);
+                const colonne = riga.split(",");
+                colonne.forEach(colonna => {
+                    const cell = indice === 0 ? document.createElement("th") : document.createElement("td");
+                    cell.textContent = colonna.trim();
+                    row.appendChild(cell);
                 });
             });
         }
 
-        function generaGrafico(csvText) {
-            const righe = csvText.split("\n");
-            const intestazioni = righe[0].split(",").map(h => h.trim()); 
-            const dati = righe.slice(1).map(riga => riga.split(",").map(cella => cella.trim()));
-            const etichette = dati.map(riga => riga[0]); 
-            const valori = dati.map(riga => parseFloat(riga[1]) || 0);
-            const ctx = document.getElementById("grafico").getContext("2d");
+        function disegnaGrafico(csvText) {
+            const righe = csvText.split("\n").slice(1);
+            const etichette = [];
+            const valori = [];
 
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: etichette, 
-                    datasets: [{
-                        label: intestazioni[1], 
-                        data: valori,
-                        borderColor: "blue",
-                        borderWidth: 2,
-                        fill: false, 
-                        pointBackgroundColor: "red", 
-                        pointRadius: 5 
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true } 
-                    }
+            righe.forEach(riga => {
+                const colonne = riga.split(",");
+                etichette.push(colonne[0].trim());
+                valori.push(parseFloat(colonne[1].trim()));
+            });
+
+            const canvas = document.getElementById("grafico");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const larghezza = canvas.width;
+            const altezza = canvas.height;
+            const padding = 40;
+            const spazioGrafico = larghezza - padding * 2;
+            const maxValore = Math.max(...valori);
+            const minValore = Math.min(...valori);
+
+            function mappaValore(valore) {
+                return altezza - padding - ((valore - minValore) / (maxValore - minValore)) * (altezza - padding * 2);
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, altezza - padding);
+            ctx.lineTo(larghezza - padding, altezza - padding);
+            ctx.strokeStyle = "#000";
+            ctx.stroke();
+
+            etichette.forEach((etichetta, indice) => {
+                const x = padding + (indice * (spazioGrafico / (etichette.length - 1)));
+                ctx.fillText(etichetta, x, altezza - padding + 15);
+            });
+
+            ctx.beginPath();
+            valori.forEach((valore, indice) => {
+                const x = padding + (indice * (spazioGrafico / (valori.length - 1)));
+                const y = mappaValore(valore);
+                if (indice === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
                 }
+            });
+            ctx.strokeStyle = "blue";
+            ctx.stroke();
+
+            valori.forEach((valore, indice) => {
+                const x = padding + (indice * (spazioGrafico / (valori.length - 1)));
+                const y = mappaValore(valore);
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = "red";
+                ctx.fill();
             });
         }
     </script>
