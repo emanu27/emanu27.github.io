@@ -1,163 +1,129 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabella con Grafico a Linea</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        canvas {
-            margin-top: 20px;
-            width: 100%;
-            height: 400px;
-            border: 1px solid black;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Grafico migranti</title>
 </head>
 <body>
-    <h1>Carica un file CSV</h1>
-    <input type="file" id="fileInput" accept=".csv">
-    <table id="csvTable"></table>
-    <canvas id="grafico"></canvas>
 
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const csvText = event.target.result;
-                    mostraTabella(csvText);
-                    disegnaGrafico(csvText);
-                };
-                reader.readAsText(file);
+  <h2>Carica un file CSV</h2>
+  <input type="file" id="fileInput" onchange="leggiCSV()">
+
+  <table border="1" id="tabella"></table>
+
+  <canvas id="grafico" width="600" height="300" style="border:1px solid black; margin-top:20px;"></canvas>
+
+  <script>
+    var anni = [];
+    var sbarchi = [];
+
+    function pulisciTabella(tabella) {
+
+      while (tabella.firstChild) {
+        tabella.removeChild(tabella.firstChild);
+      }
+    }
+
+    function leggiCSV() {
+      anni = [];
+      sbarchi = [];
+
+      var file = document.getElementById("fileInput").files[0];
+      var reader = new FileReader();
+
+      reader.onload = function() {
+        var testo = reader.result;
+        var righe = testo.split("\n");
+
+        var tabella = document.getElementById("tabella");
+        pulisciTabella(tabella);
+
+        for (var i = 0; i < righe.length; i++) {
+          var rigaTesto = righe[i].trim();
+          if (rigaTesto == "") {
+            continue;
+          }
+
+          var colonne = rigaTesto.split(",");
+          var riga = document.createElement("tr");
+
+          for (var j = 0; j < colonne.length; j++) {
+            var cella;
+            if (i == 0) {
+              cella = document.createElement("th");
             } else {
-                alert("Nessun file selezionato.");
+              cella = document.createElement("td");
             }
-        });
+            var testoCella = document.createTextNode(colonne[j].replace(/"/g, ""));
+            cella.appendChild(testoCella);
+            riga.appendChild(cella);
+          }
 
-        function mostraTabella(csvText) {
-            const righe = csvText.split("\n");
-            const table = document.getElementById("csvTable");
-            table.innerHTML = "";
+          tabella.appendChild(riga);
 
-            righe.forEach((riga, indice) => {
-                const row = table.insertRow();
-                const colonne = riga.split(",");
-                colonne.forEach(colonna => {
-                    const cell = indice === 0 ? document.createElement("th") : document.createElement("td");
-                    cell.textContent = colonna.trim();
-                    row.appendChild(cell);
-                });
-            });
+          if (i > 0) {
+            var anno = Number(colonne[0].replace(/"/g, ""));
+            var valore = Number(colonne[1].replace(/"/g, ""));
+            if (!isNaN(anno) && !isNaN(valore)) {
+              anni.push(anno);
+              sbarchi.push(valore);
+            }
+          }
         }
 
-        function disegnaGrafico(csvText) {
-            const righe = csvText.split("\n").slice(1);
-            const etichette = [];
-            const valori = [];
+        disegnaGrafico();
+      };
 
-            righe.forEach(riga => {
-                const colonne = riga.split(",");
-                etichette.push(colonne[0].trim());
-                valori.push(parseFloat(colonne[1].trim()));
-            });
+      reader.readAsText(file);
+    }
 
-            const canvas = document.getElementById("grafico");
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function disegnaGrafico() {
+      var canvas = document.getElementById("grafico");
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const larghezza = canvas.width;
-            const altezza = canvas.height;
-            const padding = 50;
-            const spazioGrafico = larghezza - padding * 2;
-            const spazioGraficoY = altezza - padding * 2;
-            const maxValore = Math.max(...valori);
-            const minValore = Math.min(...valori);
-            const stepY = (maxValore - minValore) / 5;
+      var larghezza = canvas.width;
+      var altezza = canvas.height;
 
-            function mappaValore(valore) {
-                return altezza - padding - ((valore - minValore) / (maxValore - minValore)) * spazioGraficoY;
-            }
-
-            ctx.beginPath();
-            ctx.moveTo(padding, padding);
-            ctx.lineTo(padding, altezza - padding);
-            ctx.lineTo(larghezza - padding, altezza - padding);
-            ctx.strokeStyle = "#000";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            ctx.font = "12px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-
-            etichette.forEach((etichetta, indice) => {
-                const x = padding + (indice * (spazioGrafico / (etichette.length - 1)));
-                ctx.fillText(etichetta, x, altezza - padding + 15);
-            });
-
-            for (let i = 0; i <= 5; i++) {
-                const valore = minValore + (stepY * i);
-                const y = mappaValore(valore);
-                ctx.fillText(valore.toFixed(2), padding - 30, y);
-                ctx.beginPath();
-                ctx.moveTo(padding - 5, y);
-                ctx.lineTo(padding, y);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(larghezza - padding, y);
-                ctx.strokeStyle = "#e0e0e0";
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-
-            ctx.beginPath();
-            valori.forEach((valore, indice) => {
-                const x = padding + (indice * (spazioGrafico / (valori.length - 1)));
-                const y = mappaValore(valore);
-                if (indice === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            ctx.strokeStyle = "blue";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            valori.forEach((valore, indice) => {
-                const x = padding + (indice * (spazioGrafico / (valori.length - 1)));
-                const y = mappaValore(valore);
-                ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = "red";
-                ctx.fill();
-                ctx.strokeStyle = "blue";
-                ctx.stroke();
-            });
+      var max = 0;
+      for (var i = 0; i < sbarchi.length; i++) {
+        if (sbarchi[i] > max) {
+          max = sbarchi[i];
         }
-    </script>
+      }
+
+      var passo = larghezza / (anni.length + 1);
+      var scala = altezza / max;
+      var x = passo;
+
+      ctx.beginPath();
+      ctx.moveTo(x, altezza - sbarchi[0] * scala);
+
+      for (var i = 1; i < sbarchi.length; i++) {
+        x = x + passo;
+        var y = altezza - sbarchi[i] * scala;
+        ctx.lineTo(x, y);
+      }
+
+      ctx.stroke();
+
+      x = passo;
+      ctx.font = "12px Arial";
+      ctx.fillStyle = "black";
+
+      for (var i = 0; i < anni.length; i++) {
+        ctx.fillText(anni[i], x - 10, altezza - 5);
+        x = x + passo;
+      }
+
+      for (var i = 0; i <= max; i += Math.round(max / 5)) {
+        var y = altezza - i * scala;
+        ctx.fillText(i, 5, y);
+      }
+    }
+  </script>
+
 </body>
 </html>
 
-    </script>
-</body>
-</html>
  
