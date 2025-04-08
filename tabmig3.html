@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Tabella CSV</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Carica un file CSV</h1>
+    <input type="file" id="inputFile" accept=".csv" onchange="leggiFile()">
+
+    <div id="contenitore">
+        <table id="tabella"></table>
+    </div>
+
+    <script>
+        function leggiFile() {
+            var input = document.getElementById("inputFile");
+            var file = input.files[0];
+
+            if (file) {
+                var lettore = new FileReader();
+
+                lettore.onload = function(evento) {
+                    var testo = evento.target.result;
+                    mostraTabella(testo);
+                };
+
+                lettore.readAsText(file);
+            } else {
+                alert("Devi selezionare un file.");
+            }
+        }
+
+        function mostraTabella(testoCSV) {
+            var righe = testoCSV.split("\n");
+            var tabella = document.getElementById("tabella");
+            while (tabella.rows.length > 0) {
+                tabella.deleteRow(0);
+            }
+
+            for (var i = 0; i < righe.length; i++) {
+                var rigaTesto = righe[i];
+                var celle = rigaTesto.split(",");
+                var nuovaRiga = tabella.insertRow();
+
+                for (var j = 0; j < celle.length; j++) {
+                    var nuovaCella;
+
+                    if (i == 0) {
+                        nuovaCella = document.createElement("th");
+                    } else {
+                        nuovaCella = document.createElement("td");
+                    }
+
+                    var contenuto = document.createTextNode(celle[j].trim());
+                    nuovaCella.appendChild(contenuto);
+                    nuovaRiga.appendChild(nuovaCella);
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
