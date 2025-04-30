@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prodotti</title>
+    <style>
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .product-thumbnail {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Esplora i nostri Prodotti</h1>
+    <div class="product-grid" id="productGrid"></div>
+
+    <script src="products.js"></script>
+</body>
+</html>
+const products = [
+    {
+        "marca": "Samsung",
+        "modello": "S13",
+        "prezzo": 699.99,
+        "immagine": "samsung_s13.jpg"
+    },
+    {
+        "marca": "Apple",
+        "modello": "iPhone 14",
+        "prezzo": 899.99,
+        "immagine": "iphone_14.jpg"
+    }
+];
+
+const productGrid = document.getElementById('productGrid');
+
+products.forEach(product => {
+    const productElement = document.createElement('div');
+    productElement.classList.add('product-thumbnail');
+    productElement.innerHTML = `
+        <img src="${product.immagine}" alt="${product.modello}" width="150">
+        <h3>${product.marca} ${product.modello}</h3>
+        <p>${product.prezzo} €</p>
+        <a href="product-detail.html?modello=${product.modello}">Vedi Dettagli</a>
+    `;
+    productGrid.appendChild(productElement);
+});
