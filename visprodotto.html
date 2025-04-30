@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettagli del Prodotto</title>
+</head>
+<body>
+    <h1 id="productTitle"></h1>
+    <img id="productImage" width="300">
+    <p id="productDescription"></p>
+    <p><strong>Prezzo:</strong> <span id="productPrice"></span> €</p>
+    <button id="addToCart">Aggiungi al Carrello</button>
+
+    <script src="product-detail.js"></script>
+</body>
+</html>
+const urlParams = new URLSearchParams(window.location.search);
+const modello = urlParams.get('modello');
+
+const products = [
+    {
+        "marca": "Samsung",
+        "modello": "S13",
+        "descrizione": "Smartphone con display AMOLED",
+        "prezzo": 699.99,
+        "immagine": "samsung_s13.jpg"
+    },
+    {
+        "marca": "Apple",
+        "modello": "iPhone 14",
+        "descrizione": "Smartphone con chip A15 Bionic",
+        "prezzo": 899.99,
+        "immagine": "iphone_14.jpg"
+    }
+];
+
+const product = products.find(p => p.modello === modello);
+
+if (product) {
+    document.getElementById('productTitle').innerText = `${product.marca} ${product.modello}`;
+    document.getElementById('productImage').src = product.immagine;
+    document.getElementById('productDescription').innerText = product.descrizione;
+    document.getElementById('productPrice').innerText = product.prezzo;
+}
