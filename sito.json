@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "nome": "Mario",
+      "cognome": "Rossi",
+      "username": "mario123",
+      "password": "$2a$10$WbZgSl9D1.fO3EjQWpF9Je5",
+      "indirizzo": "Via Roma 1",
+      "citta": "Milano",
+      "cap": "20100",
+      "telefono": "123456789"
+    }
+  ],
+  "prodotti": [
+    {
+      "marca": "Samsung",
+      "modello": "S13",
+      "descrizione": "Smartphone con display AMOLED",
+      "immagine": "samsung_s13.jpg",
+      "prezzo": 699.99
+    },
+    {
+      "marca": "Apple",
+      "modello": "iPhone 14",
+      "descrizione": "Smartphone con chip A15 Bionic",
+      "immagine": "iphone_14.jpg",
+      "prezzo": 899.99
+    }
+  ]
+}
