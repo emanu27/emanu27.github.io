@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scontrino</title>
+</head>
+<body>
+    <h1>Scontrino di Vendita</h1>
+    <div id="invoiceDetails"></div>
+    <button onclick="generatePDF()">Scarica Scontrino</button>
+
+    <script src="invoice.js"></script>
+</body>
+</html>
+function generatePDF() {
+    const invoiceDetails = document.getElementById('invoiceDetails');
+    let content = '';
+
+    cart.forEach(item => {
+        content += `${item.marca} ${item.modello}: ${item.prezzo} € x ${item.quantità}\n`;
+    });
+
+    const totalPrice = cart.reduce((acc, item) => acc + item.prezzo * item.quantità, 0);
+
+    content += `Totale: ${totalPrice.toFixed(2)} €`;
+
+    const pdf = new jsPDF();
+    pdf.text(content, 10, 10);
+    pdf.save('scontrino.pdf');
+}
+
+const cartDetails = cart.map(item => `
+    ${item.marca} ${item.modello} - ${item.prezzo} € x ${item.quantità}
+`).join('<br>');
+document.getElementById('invoiceDetails').innerHTML = cartDetails;
