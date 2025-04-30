@@ -17,3 +17,24 @@
     <script src="script.js"></script>
 </body>
 </html>
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const fileInput = document.getElementById('jsonFile');
+    const file = fileInput.files[0];
+    
+    if (file && file.type === 'application/json') {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const jsonData = JSON.parse(reader.result);
+            console.log(jsonData);  // Qui puoi vedere i dati caricati nel file
+            document.getElementById('message').innerText = "File caricato correttamente!";
+            // Redirigi l'utente alla pagina successiva
+            window.location.href = "welcome.html"; 
+        };
+        reader.readAsText(file);
+    } else {
+        document.getElementById('message').innerText = "Per favore, carica un file JSON valido.";
+    }
+});
+
