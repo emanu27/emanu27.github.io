@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrello</title>
+</head>
+<body>
+    <h1>Il tuo Carrello</h1>
+    <div id="cartItems"></div>
+    <p><strong>Totale: <span id="totalPrice"></span> €</strong></p>
+    <button id="checkoutButton">Procedi al Checkout</button>
+
+    <script src="cart.js"></script>
+</body>
+</html>
+const cart = [
+    { modello: "S13", marca: "Samsung", prezzo: 699.99, quantità: 1 },
+    { modello: "iPhone 14", marca: "Apple", prezzo: 899.99, quantità: 1 }
+];
+
+const cartItems = document.getElementById('cartItems');
+const totalPriceElement = document.getElementById('totalPrice');
+
+function updateCart() {
+    cartItems.innerHTML = '';
+    let totalPrice = 0;
+    cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.innerHTML = `
+            <p>${item.marca} ${item.modello} - ${item.prezzo} € x ${item.quantità}</p>
+            <button onclick="removeFromCart('${item.modello}')">Rimuovi</button>
+        `;
+        cartItems.appendChild(itemElement);
+        totalPrice += item.prezzo * item.quantità;
+    });
+    totalPriceElement.innerText = totalPrice.toFixed(2);
+}
+
+function removeFromCart(modello) {
+    const index = cart.findIndex(item => item.modello === modello);
+    if (index > -1) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+}
+
+updateCart();
