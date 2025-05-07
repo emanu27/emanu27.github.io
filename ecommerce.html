@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Negozio Online</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        #prodotti, #vetrina, #carrello, #scontrino { display: none; }
+        .card {
+            border: 1px solid black;
+            padding: 10px;
+            width: 200px;
+            margin: 10px;
+            float: left;
+            text-align: center;
+        }
+        .card img { width: 100%; height: auto; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        button { margin: 5px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Carica file JSON</h2>
+    <input type="file" id="fileInput"><br><br>
+
+    <div id="benvenuto"></div>
+
+    <div id="prodotti">
+        <h2>Prodotti disponibili</h2>
+        <div id="listaProdotti" class="clearfix"></div>
+    </div>
+
+    <div id="vetrina">
+        <h2>Dettaglio prodotto</h2>
+        <div id="dettaglioProdotto"></div>
+        <button onclick="aggiungiAlCarrello()">Aggiungi al carrello</button>
+        <button onclick="tornaAllaLista()">Torna ai prodotti</button>
+    </div>
+
+    <div id="carrello">
+        <h2>Carrello</h2>
+        <ul id="listaCarrello"></ul>
+        <p id="totale"></p>
+        <button onclick="mostraScontrino()">Conferma e stampa scontrino</button>
+    </div>
+
+    <div id="scontrino">
+        <h2>Scontrino</h2>
+        <div id="datiUtente"></div>
+        <ul id="scontrinoLista"></ul>
+        <p id="scontrinoTotale"></p>
+        <button onclick="window.print()">Stampa</button>
+    </div>
+
+    <script>
+        var datiJSON;
+        var carrello = [];
+        var prodottoSelezionato;
+
+        document.getElementById("fileInput").addEventListener("change", function() {
+            var file = this.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function() {
+                datiJSON = JSON.parse(reader.result);
+                mostraBenvenuto();
+                mostraProdotti();
+            };
+
+            reader.readAsText(file);
+        });
+
+        function mostraBenvenuto() {
+            var benv = document.getElementById("benvenuto");
+            benv.innerHTML = "Benvenuto, " + datiJSON.utente.nome + " " + datiJSON.utente.cognome + "<br><br>";
+            benv.innerHTML += "<button onclick='document.getElementById(\"prodotti\").style.display=\"block\"'>Visualizza Prodotti</button>";
+        }
+
+        function mostraProdotti() {
+            var lista = document.getElementById("listaProdotti");
+            lista.innerHTML = "";
+            var prodotti = datiJSON.prodotti;
+
+            for (var i = 0; i < prodotti.length; i++) {
+                var div = document.createElement("div");
+                div.className = "card";
+                div.onclick = function(indice) {
+                    return function() {
+                        mostraDettaglio(indice);
+                    };
+                }(i);
+
+                var img = document.createElement("img");
+                img.src = "img/" + prodotti[i].immagine;
+
+                var nome = document.createElement("h3");
+                nome.appendChild(document.createTextNode(prodotti[i].marca + " " + prodotti[i].modello));
+
+                var prezzo = document.createElement("p");
+                prezzo.appendChild(document.createTextNode("Prezzo: " + prodotti[i].prezzo + " €"));
+
+                div.appendChild(img);
+                div.appendChild(nome);
+                div.appendChild(prezzo);
+                lista.appendChild(div);
+            }
+        }
+
+        function mostraDettaglio(indice) {
+            var prodotto = datiJSON.prodotti[indice];
+            prodottoSelezionato = prodotto;
+
+            var area = document.getElementById("dettaglioProdotto");
+            area.innerHTML = "";
+
+            var img = document.createElement("img");
+            img.src = "img/" + prodotto.immagine;
+            img.style.width = "300px";
+
+            var testo = document.createElement("p");
+            testo.appendChild(document.createTextNode(
+                prodotto.marca + " " + prodotto.modello + " - " + prodotto.descrizione + 
+                " - Prezzo: " + prodotto.prezzo + " €"
+            ));
+
+            area.appendChild(img);
+            area.appendChild(testo);
+
+            document.getElementById("prodotti").style.display = "none";
+            document.getElementById("vetrina").style.display = "block";
+        }
+
+        function aggiungiAlCarrello() {
+            carrello.push(prodottoSelezionato);
+            document.getElementById("vetrina").style.display = "none";
+            aggiornaCarrello();
+            document.getElementById("carrello").style.display = "block";
+        }
+
+        function aggiornaCarrello() {
+            var lista = document.getElementById("listaCarrello");
+            lista.innerHTML = "";
+            var totale = 0;
+
+            for (var i = 0; i < carrello.length; i++) {
+                var li = document.createElement("li");
+                li.appendChild(document.createTextNode(carrello[i].marca + " " + carrello[i].modello + " - " + carrello[i].prezzo + " €"));
+                lista.appendChild(li);
+                totale += carrello[i].prezzo;
+            }
+
+            document.getElementById("totale").innerHTML = "Totale: " + totale + " €";
+        }
+
+        function tornaAllaLista() {
+            document.getElementById("vetrina").style.display = "none";
+            document.getElementById("prodotti").style.display = "block";
+        }
+
+        function mostraScontrino() {
+            document.getElementById("carrello").style.display = "none";
+            document.getElementById("scontrino").style.display = "block";
+
+            var dati = datiJSON.utente;
+            var divUtente = document.getElementById("datiUtente");
+            divUtente.innerHTML = "Spedizione a: " + dati.nome + " " + dati.cognome + "<br>" +
+                                  dati.indirizzo + ", " + dati.cap + " " + dati.città + "<br>Telefono: " + dati.telefono;
+
+            var lista = document.getElementById("scontrinoLista");
+            lista.innerHTML = "";
+            var totale = 0;
+
+            for (var i = 0; i < carrello.length; i++) {
+                var li = document.createElement("li");
+                li.appendChild(document.createTextNode(carrello[i].marca + " " + carrello[i].modello + " - " + carrello[i].prezzo + " €"));
+                lista.appendChild(li);
+                totale += carrello[i].prezzo;
+            }
+
+            document.getElementById("scontrinoTotale").innerHTML = "Totale: " + totale + " €";
+        }
+    </script>
+</body>
+</html>
